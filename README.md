@@ -1,5 +1,7 @@
 # NodeJS-Login-with-sqlite3
+# Developed By Ajmir Raziqi
 A Simple E-commerce website selling sport clothes using NodeJS Login with sqlite3
+
 
 
 To use this application follow the instraction below:
