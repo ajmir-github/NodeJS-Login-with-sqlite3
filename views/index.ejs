@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+    <!-- HEAD -->
+    <%- include("./partials/head", page_name)%>
+<body>
+    <!-- A grey horizontal navbar that becomes vertical on small screens -->
+    <nav class="navbar navbar-expand-sm text-light justify-content-around bg-primary">
+        <span class="px-2"><h2><%= name %></h2></span>
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link text-light" href="/">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-light" href="/login">Login</a>
+            </li>
+        </ul>
+  </nav>
+
+  <!-- Main section -->
+<div class="container">
+	<div class="row justify-content-center">
+		<!-- 1st Column: filter, search and other settings go here-->
+		<div class="col-md-3 col-lg-2 py-4 px-2">
+			<h1 class="text-primary">Filter</h1>
+			<hr>
+			<h5 class="text-dark">Departments:</h5>
+			<select class="form-control" id="filterData1">
+				<option>All</option>
+				<option>Women</option>
+				<option>Men</option>
+				<option>Girls</option>
+                <option>Boys</option>
+				<option>Baby</option>                
+			</select>
+			<hr>
+			<h5 class="text-dark">Types:</h5>
+			<select class="form-control" id="filterData2">
+				<option>All</option>
+				<option>Clothing</option>
+				<option>Shoes</option>
+				<option>Handbags</option>
+                <option>Jewelry</option>
+				<option>Watches</option>
+                <option>Accessories</option>          
+			</select>
+            <hr>
+			<h5 class="text-dark">Featured Categories:</h5>
+			<select class="form-control" id="filterData3">
+				<option>All</option>
+				<option>Shirts</option>
+				<option>T-shirts & Tanks</option>
+				<option>Jackets & Coats</option>
+                <option>Fashion Hoodies & Sweatshirts</option>
+				<option>Socks & Tights</option>
+                <option>Sweaters</option>
+				<option>Jeans</option>
+				<option>Pants</option>
+                <option>Dresses</option>
+				<option>Tops, Tees & Blouses</option>          
+			</select>
+            <hr>
+			<h5 class="text-dark">Price:</h5>
+			<select class="form-control" id="filterData4">
+				<option>All</option>
+				<option>-100</option>
+				<option>-500</option>
+				<option>-1,000</option>
+				<option>-2,000</option>
+                <option>-5,000</option>
+                <option>-10,000</option>
+                <option>-500,000</option>
+                <option>-1,000,000</option>
+                <option>+1,000,000</option>
+			</select>
+			<hr>
+			<div class="row justify-content-center">
+                <button type="button" class="btn btn-primary" id="filterBtn">Filter</button>
+            </div>
+		</div>
+	
+			<!-- End of 1st Column-->
+
+		<!-- 2nd Column: posts go here-->
+		<div class="col-md-9 col-lg-8 py-4 px-2" >
+				<!-- search engin-->
+			<div class="row justify-content-center px-3">
+			  <div class="input-group mb-3" style="width: 80%;">
+			    <input id="searchInput" type="text" class="form-control" placeholder="Search here">
+			    <div class="input-group-append">
+			      <button id="searchBtn" class="btn btn-primary" type="submit">Go</button>  
+			     </div>
+			  </div>
+			  <div class="text-danger text-left" id="searchWarning"></div>
+            </div>
+            <div id='loadingImage' class="row justify-content-center align-content-center" style="height: 50vh;">
+                <img src="images/loader.gif" alt="Loader Image">
+            </div>
+			<div id="displayPosts" class="row justify-content-center align-content-center"> 
+                <!-- Posts will be added here -->
+            </div>
+		    <div class="row justify-content-center align-content-center">
+                <h2 class="btn btn-outline-primary m-4" id="LoadMoreBtn">Load More</h2>
+            </div>
+		</div>
+		<!-- End of 2nd Column-->
+
+		<!-- 3rd Column: Ads go here-->
+		<div id='addsPlaceholder' class="col-md-10 col-lg-2 py-4">
+        </div>
+        
+	</div>	
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        // selecting commen document elements
+        const postContainer = $("#displayPosts");
+        const loadingImage = $("#loadingImage");
+        const loadMore = $("#LoadMoreBtn");
+        // loadingImage.hide();
+        loadMore.hide();
+        postContainer.hide();
+
+      
+        
+        // getting the latesr data
+        // setTimeout(() => {
+            $.get("/items/read_lastest", (data, status)=>{
+                if(status == 'success'){
+                    display(data);
+                    loadingImage.fadeOut(400, ()=>{
+                        postContainer.fadeIn(1000, ()=>{
+                            loadMore.fadeIn(400);
+                        });
+                    });
+                }
+            }); 
+        // }, 1000);
+
+        function display(data){
+            // console.log(data);
+            let items = '';
+            if(data.length == 0){
+                items = "<h2 class='alert alert-warning'>No data found!</h2>"
+            } else {
+                data.forEach(({id, title, gender ,size , item_data , price}) => {
+                    // id, title, gender , size , item_data , price , by_id , viewed
+                    let htmlItem = `
+                        <div class="col-10 col-sm-9 col-md-5 col-lg-3 m-3">
+                            <img class="card-img-top" src="/images/coach_img${id}.png" style="width:160px" alt="Card image">
+                            <div class="card-body">
+                            <h4 class="card-title">${title}</h4>
+                            <p class="card-text">Gender:<span class="badge badge-primary"> ${gender}</span><br> Size:<span class="badge badge-primary"> ${size}</span><br> Price:<span class="badge badge-primary"> ${price}</span></p>
+                            <a href="/items/read/${id}" class="card-link">View</a>
+                            </div>
+                        </div>
+                        `;
+                    items += htmlItem;
+                });
+            }
+            
+            postContainer.html(items);
+        }
+
+        $("#searchBtn").click(function () {
+            let searchInput = $("#searchInput").val();
+            if (searchInput != '') {
+                // code goes here
+                // console.log(searchInput);
+                loadMore.hide();
+                postContainer.fadeOut();
+                loadingImage.fadeIn();
+                $.post("/items/search",{searchInput}, (data, status)=>{
+                    if(status == 'success'){
+                        loadingImage.fadeOut(400, ()=>{
+                            display(data);
+                            postContainer.fadeIn();
+
+                        });
+                    }
+                }); 
+            } else {
+                alert('Enter something in than search box the click on GO button!');
+            }
+        });
+              
+    
+        $("#filterBtn").click(function () {
+            let gender = $("#filterData1").val();
+            let type = $("#filterData2").val();
+            let title = $("#filterData3").val();
+            let price = $("#filterData4").val();
+            
+            if (gender  == 'All'   ) { gender   = '';}
+            if (type    == 'All'   ) { type     = '';}
+            if (title   == 'All'   ) { title    = '';}
+            if (price   == 'All'   ) { price    = '';}
+
+            if(gender=='' && type=='' && title=='' && price==''){
+                alert("Have your selections then click on filter")
+            } else {
+                console.log(gender,type,title,price);
+                postContainer.fadeOut(400,()=>{
+                    loadingImage.fadeIn();
+                    $.post("items/filter", {gender,type,title,price}, (data, status)=>{
+                    if(status == 'success'){
+                        loadingImage.fadeOut(400, ()=>{
+                            display(data);
+                            loadingImage.fadeOut(400,()=>{
+                                postContainer.fadeIn();
+                            })
+                        });
+                    }
+                })
+                });                           
+            }
+        });
+    
+      // retrieving addes
+        const addsPlaceholder = $("#addsPlaceholder");
+        $.get("/adds", (data, status)=>{
+            if(status == 'success'){
+                $("#addsPlaceholder").html(data);
+            }
+        });
+        
+    });
+</script>
+
+    <%- include("./partials/footer")%>
+</body>
+</html>

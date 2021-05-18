@@ -1,7 +1,1 @@
-/build
-/controllers
 /node_modules
-/.env
-app.js
-/routes
-/views

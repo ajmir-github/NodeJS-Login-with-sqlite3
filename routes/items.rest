@@ -1,0 +1,47 @@
+### --------------------------------------------
+### creating an item
+POST http://localhost:3000/items/create
+Content-Type: application/json
+
+{
+    "title": "Aliaboba",
+    "Gender": "Man",
+    "Size": "XXL",
+    "item_data": "item_data",
+    "Price": "200",
+    "by_id": "2",
+    "viewed": "0"
+}
+
+### reading all items
+GET http://localhost:3000/items/read
+
+### reading an item
+GET http://localhost:3000/items/read/3
+
+### reading the latest items
+GET http://localhost:3000/items/read_lastest
+
+### reading the most viewed items
+GET http://localhost:3000/items/read_viewed
+
+###
+GET http://localhost:3000/items/search/mask
+
+ 
+### --------------------------------------------
+### Updating an item addressed by an id
+POST http://localhost:3000/items/update/19
+Content-Type: application/json
+
+{
+    "title":"Shakespher",
+    "description":"King Lair",
+    "price":"1300",
+    "type":"English/ book/ Story/ pride/ top"
+}
+
+### --------------------------------------------
+### Deleteing an item addressed by an id
+DELETE http://localhost:3000/items/delete/19
+
